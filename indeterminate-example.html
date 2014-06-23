@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="utf-8">
+
+  <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+       Remove this if you use the .htaccess -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Indeterminate Plug-in Demo</title>
+  <meta name="description" content="indeterminate is a jQuery plugin that sets the approriate checkbox state of nested checkboxes.">
+  <meta name="author" content="Cory Dorning">
+
+  <style>
+    ul { list-style-type: none; }
+  </style>
+</head>
+
+<body class="body">
+
+  <div class="container">
+
+    <h1>Indeterminate Checkbox Plugin</h1>
+
+    <p>A demo showcasing the jQuery plugin, <strong>indeterminate</strong>. <!--Be sure to check out the <a href="http://corydorning.com/projects/indeterminate">indeterminate project page</a> or just <a href="https://github.com/corydorning/indeterminate">grab the source code</a>.--></p>
+
+
+    <h2>Standard Checkbox</h2>
+    <ul class="test">
+      <li><input type="checkbox"> Test Checkbox - Should not be affected by those below it. This is a test for scoping and is intentional. The plugin is initiated at the level below this.
+        <ul class="indeterminate">
+          <li>
+            <input type="checkbox" name="tall" id="tall">
+            <label for="tall">Tall Things</label>
+
+            <ul>
+              <li>
+                <input type="checkbox" id="tall-1">
+                <label for="tall-1">Buildings</label>
+
+                <ul>
+                  <li>
+                    <input type="checkbox" id="tall-1-1">
+                    <label for="tall-1-1">Burj Khalifa</label>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <input type="checkbox" id="tall-2">
+                <label for="tall-2">Giants</label>
+
+                <ul>
+                  <li>
+                    <input type="checkbox" id="tall-2-1">
+                    <label for="tall-2-1">Andre</label>
+                  </li>
+                  <li>
+                    <input type="checkbox" id="tall-2-2">
+                    <label for="tall-2-2">Paul Bunyan</label>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <input type="checkbox" id="tall-3">
+                <label for="tall-3">Double Decker Sandwiches</label>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <input type="checkbox" id="short">
+            <label for="short">Short Things</label>
+
+            <ul>
+              <li>
+                <input type="checkbox" id="short-1">
+                <label for="short-1">Smurfs</label>
+              </li>
+              <li>
+                <input type="checkbox" id="short-2">
+                <label for="short-2">Mushrooms</label>
+              </li>
+              <li>
+                <input type="checkbox" id="short-3">
+                <label for="short-3">Single Sandwich</label>
+              </li>
+            </ul>
+          </li>
+        </ul>​<!-- .indeterminate -->
+      </li>
+    </ul><!-- .test -->
+
+
+    <h2>Checkboxes within a <code>&lt;label&gt;</code></h2>
+    <ul class="indeterminate" data-label="true">
+      <li>
+        <label>
+          <input type="checkbox"> Tall Things
+        </label>
+
+        <ul>
+          <li>
+            <label>
+              <input type="checkbox"> Buildings
+            </label>
+
+            <ul>
+              <li>
+                <label>
+                  <input type="checkbox"> Burj Khalifa
+                </label>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <label>
+              <input type="checkbox"> Giants
+            </label>
+
+            <ul>
+              <li>
+                <label>
+                  <input type="checkbox"> Andre
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox"> Paul Bunyan
+                </label>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <label>
+              <input type="checkbox"> Double Decker Sandwiches
+            </label>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <label>
+          <input type="checkbox"> Short Things
+        </label>
+
+        <ul>
+          <li>
+            <label>
+              <input type="checkbox"> Smurfs
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="checkbox"> Mushrooms
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="checkbox"> Single Sandwich
+            </label>
+          </li>
+        </ul>
+      </li>
+    </ul>​
+  </div><!-- .container -->
+
+
+  <!-- Javascript at the bottom for faster page loading -->
+  <!-- load jQuery script -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
+
+  <!-- load jangle plugin -->
+  <script src="jquery-indeterminate.js"></script>
+
+  <!-- demo scripts -->
+  <script>
+    $('.indeterminate').indeterminate();
+  </script>
+</body>
+</html>
