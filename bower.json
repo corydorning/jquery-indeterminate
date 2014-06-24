@@ -1,0 +1,22 @@
+{
+  "name": "jquery-indeterminate",
+  "main": "jquery-indeterminate.js",
+  "version": "1.0.0",
+  "homepage": "https://github.com/corydorning/jquery-indeterminate",
+  "authors": [
+    "Cory Dorning <cory@dorning.me>"
+  ],
+  "description": "Indeterminate is a jQuery plugin that updates checkboxes based on the parent/child relationship. If a parent checkbox checked/unchecked, all children subsequently become checked/unchecked. If a child checkbox is checked the parent becomes an indeterminate checkbox if ALL child checkboxes are not checked.",
+  "keywords": [
+    "jquery",
+    "indeterminate"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
