@@ -7,7 +7,7 @@
  * Dependencies: jQuery v1.8+
  *
  * Last modified by: Cory Dorning
- * Last modified on: 12/13/2012
+ * Last modified on: 08/04/2014
  *
  * Indeterminate is a jQuery plugin that updates checkboxes based on the
  * parent/child relationship. If a parent checkbox checked/unchecked, all
