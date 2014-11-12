@@ -4,10 +4,10 @@
  * Website: http://corydorning.com/projects/indeterminate
  * Source: https://github.com/corydorning/indeterminate
  *
- * Dependencies: jQuery v1.8+
+ * Dependencies: jQuery v1.10+
  *
  * Last modified by: Cory Dorning
- * Last modified on: 08/04/2014
+ * Last modified on: 11/12/2014
  *
  * Indeterminate is a jQuery plugin that updates checkboxes based on the
  * parent/child relationship. If a parent checkbox checked/unchecked, all
@@ -17,127 +17,177 @@
  *
  */
 
+// include semicolon to make sure any JS before this plugin is terminated
 ;(function($) {
   "use strict";
 
-  $.fn.indeterminate = function(options) {
-        // set defaults
+  // create the plugin
+  $.indeterminate = function(element, options) {
+
+    // plugin's default options
     var defaults = {
-          label: false // checkbox contained within label (true/false)
-        },
+        label: false // checkbox contained within label (true/false)
+      }
+      ,
+    // reference to the actual DOM element
+      sel = element
+      ,
+    // reference to the jQuery version of DOM element
+      $sel = $(sel)
+      ,
+    // reference to the current instance of the object
+      plugin = this
+      ,
+    // private methods
+      _setState = {
+        child: function($checkbox, state) {
+          var $cbContainer = $checkbox.closest('li');
 
-        // overwrite default options with those set
-        settings = $.extend(defaults, options),
+          $cbContainer.children('ul').find(':checkbox').prop({
+            // set to parent state since it changed
+            checked: state,
 
-        // original jQuery object
-        $container = this;
+            // reset since parent was changed
+            indeterminate: false
+          });
+        }, // _setState.child()
 
-    // don't be the weakest link ( return to preserve chainability)
-    // add change event to all checkboxes
-    return $container.each(function() {
-      var $set = $(this),
+        parent: function($checkbox, state) {
+          // current checkbox parent
+          var checkbox = plugin.settings.label ? '> label > :checkbox': '> :checkbox'
+            ,
+            $cbContainer = $checkbox.closest('li')
+            ,
+            $cbParent = $cbContainer.parent($sel).not($sel).closest('li').find(checkbox)
+            ,
+            $cbSiblings = $cbContainer.siblings('li').find(checkbox)
+            ,
+            // assume all siblings match
+            siblingsMatch = true
+            ,
+            // init to match current checkbox
+            indeterminateState = $checkbox.prop('indeterminate')
+            ;
 
-          // check for label container
-          label = $set.data('label') || settings.label,
+          // check if sibling checkboxes match
+          $cbSiblings.each(function() {
+            var $currSibling = $(this)
+            ;
 
-          setState = function() {
-            // checked?
-            var $this = $(this),
+            // if indeterminate state is true for any checkbox, keep it true
+            indeterminateState = indeterminateState || $currSibling.prop('indeterminate');
 
-            checked = $this.prop('checked'),
+            // as long as siblings checked state match, keep checking to make sure
+            if(siblingsMatch) {
+              siblingsMatch = $currSibling.prop('checked') === state;
+            }
+          });
 
-            // get parent container
-            $parent = $this.closest('li'),
+          // siblings match and state is checked
+          if (siblingsMatch) {
+            // set parent to match siblings
+            $cbParent
+              .prop({
+                checked: state,
+                indeterminate: indeterminateState
+              })
+              // set childTrigger param to true so it doesn't
+              // set child state since it's already been processed
+              .trigger('change', true)
+            ;
 
-            // check if checkbox parent is a part of the set
-            setCheck = function($el) {
-              // if element parent
-              if (!$set.is($el.parent())) {
-                // check parents siblings
-                siblingCheck($el);
-              }
+          } else {
+            $cbParent
+              .prop({
+                checked: false,
+                indeterminate: true
+              })
+              // set childTrigger param to true so it doesn't
+              // set child state since it's already been processed
+              .trigger('change', true)
+            ;
+          }
+        } // _setState.parent()
+      }
+      ;
 
-            },
-
-            // recursive sibling check
-            siblingCheck = function($el) {
-              // current checkbox parent
-              var $currParent = $el.parent().parent(),
-
-              // check for label and get current child checkboxes
-                $currChildren = label ? $currParent.children('label').children(':checkbox') : $currParent.children(':checkbox'),
-
-              // assume siblings match current checkbox
-                matched = true;
-
-              // check if sibling checkboxes match
-              $el.siblings().each(function() {
-                // check for label and get sibling child checkboxes
-                var $sibling = label ? $(this).children('label') : $(this);
-
-                // update match variable
-                matched = $sibling.children(':checkbox').prop('checked') === checked;
-
-                // keep going if they match
-                return matched;
-
-              }); // end loop
-
-              if (matched && checked) { // if siblings and checkbox are checked
-
-                // set parent to checked
-                $currChildren.prop({
-                  checked: checked,
-                  indeterminate: false
-                });
-
-                // check if current parent is contained within the set
-                setCheck($currParent);
-
-              } else if (matched && !checked) { // if siblings and checkbox are unchecked
-
-                // set parent to unchecked
-                $currChildren.prop({
-                  checked: checked,
-                  indeterminate: ($currParent.children('ul').find(':checked').length > 0)
-                });
-
-                // check if current parent is contained within the set
-                setCheck($currParent);
-
-              } else { // some checked/unchecked
-                // check for label and get checkbox ancestors within the set
-                var $ancestors = label ? $el.parentsUntil($set).children('label') : $el.parentsUntil($set);
-
-                // set ancestors to indeterminate
-                $ancestors.children(':checkbox').prop({
-                  checked: false,
-                  indeterminate: true
-                });
-
-              } // end if matched && checked
-
-            }; // end siblingCheck
-
-            // set all child checkboxes to match parent
-            $parent.find(':checkbox').prop({
-              checked: checked,
-              indeterminate: false
-            });
-            console.log(this);
-            // check if current parent is contained within the set
-            setCheck($parent);
-          }; // setState
+    // merge defaults and user-provided options (if any)
+    // private: plugin.settings.propertyName
+    // public: el.data('indeterminate').settings.propertyName
+    plugin.settings = $.extend({}, defaults, options);
 
 
-        $set
-          .find(':checkbox')
-            // add change event to checkboxes within the set
-            .change(setState)
-          // get checked on init, trigger change event to set state
-          .filter(':checked')
-            .each(function() { $(this).trigger('change'); });
+    // the "constructor" method that gets called when the plugin object is created
+    plugin.init = function() {
+      $sel
+        // add delegated change event for checkboxes
+        .on('change', ':checkbox', plugin.setStates)
+
+        // needed for IE, since 'change' isn't triggered on indeterminate checkboxes
+        .on('click', ':checkbox', function(el) {
+          var $checkbox = $(el.target)
+            ;
+
+          $checkbox.trigger('change');
+        })
+
+        // find those initially checked and
+        // trigger change to set state
+        .find(':checked')
+        .trigger('change')
+      ;
+    };
+
+
+    plugin.setStates = function(checkbox, childTrigger) {
+      var $checkbox = $(this),
+        state = $checkbox.prop('checked')
+        ;
+
+      // set child state if not triggered from child
+      if (!childTrigger) {
+        _setState.child($checkbox, state);
+      }
+
+      // set parent state
+      _setState.parent($checkbox, state);
+    }; // plugin.setState()
+
+    // start the plugin -  call the "constructor" method
+    plugin.init();
+
+  };
+
+  // add the plugin to the jQuery.fn object
+  $.fn.indeterminate = function(options) {
+
+    // iterate through the DOM elements that match the selector
+    return this.each(function() {
+      // reference to the actual DOM element
+      var curr = this
+        ,
+      // reference to the jQuery version of DOM element
+        $curr = $(this)
+        ,
+      // merge user defaults and current element specific data-options (if any)
+        settings = $.extend({}, options, $curr.data('options'))
+        ;
+
+      // plugin exist on this element?
+      if (!$curr.data('indeterminate')) {
+        // create a new instance of the plugin
+        // pass the DOM element and the merged settings as arguments
+        var plugin = new $.indeterminate(curr, settings);
+
+        // store a reference to the plugin object which you can later access
+        //  element.data('indeterminate').publicMethod(arg1, arg2, argN)
+        //  element.data('indeterminate').settings.propertyName
+        $curr.data('indeterminate', plugin);
+      }
+
     });
 
   };
+
 })(jQuery);
+// end indeterminate
