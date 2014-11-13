@@ -169,9 +169,12 @@
       // reference to the jQuery version of DOM element
         $curr = $(this)
         ,
+
+        data = $curr.data('options') && $curr.data('options').indeterminate || {},
+
       // merge user defaults and current element specific data-options (if any)
-        settings = $.extend({}, options, $curr.data('options'))
-        ;
+        settings = $.extend({}, options, data)
+      ;
 
       // plugin exist on this element?
       if (!$curr.data('indeterminate')) {
